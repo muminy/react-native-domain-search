@@ -4,24 +4,20 @@ import {
     FlatList,
     StyleSheet,
     Text,
-    TouchableOpacity
 } from 'react-native';
-import SearchComponent from '../components/SearchComponent';
-import { CancelIcon, KalpIcon } from '../constant/Icons';
-import { useIsFocused  } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
-import { getDiffDay } from './Main';
+import DomainList from '../components/DomainList';
 
 const Follow = ({navigation}) => {
 
-    const [follow, setFollow] = useState([]);
+    const [follow, setFollow] = useState(null);
 
     useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
+        const followFocus = navigation.addListener('focus', () => {
             getFollow()
         });
     
-        return unsubscribe;
+        return followFocus;
     }, [navigation]);
 
     useEffect(() => {
@@ -71,37 +67,21 @@ const Follow = ({navigation}) => {
                 <Text style={style.h3}>Takiplerin</Text>
                 <Text style={style.p}>Takip listen günlük olarak güncellenir</Text>
             </View>
-            {follow.length ? (
+            {follow && follow.length ? (
                 <FlatList
                     style={{paddingHorizontal: 15}}
                     data={follow}
                     keyExtractor={_ => _.domain}
                     renderItem={({item, index}) => (
-                        <View style={style.domains}>
-                                <View style={[style.d_name, { backgroundColor: item.registrarName === 'MISSING_WHOIS_DATA' ? '#4dd188' : '#ff4800'}]}>
-                                    <Text style={style.gun}>{
-                                        item.registrarName === 'MISSING_WHOIS_DATA'
-                                            ? 'BOŞ'
-                                            : getDiffDay(item.delDate)
-                                    }</Text>
-                                </View>
-                                <View style={{marginLeft: 15, marginRight: 'auto'}}>
-                                    <Text style={style.domain}>{item.domain}</Text>
-                                    <Text numberOfLines={1} style={style.marka}>{
-                                        item.registrarName === 'MISSING_WHOIS_DATA' 
-                                            ? 'Domain Boşta' 
-                                            : item.registrarName
-                                    }</Text>
-                                </View>
-                                <TouchableOpacity 
-                                    style={[style.follow_et, { backgroundColor: item.follow ? "#ff4800" : "#eee"}]}
-                                    onPress={() => addFollow(item, index, item.follow)}>
-                                    <KalpIcon size={20} color={item.follow ? "#fff" : "#111"} />
-                                </TouchableOpacity>
-                            </View>
+                        <DomainList 
+                            item={item}
+                            addFollow={() => addFollow(item, index, item.follow)}
+                            index={index}
+                        />
                     )}
                 />
-            ) : (
+            ) : null}
+            {follow && follow.length === 0 && (
                 <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
                     <Text style={style.h3}>Buralar boş!</Text>
                     <Text style={[style.p, { width: '50%', textAlign: 'center'}]}>Henüz takip ettiğin herhangi bir domain bulunmamakta</Text>

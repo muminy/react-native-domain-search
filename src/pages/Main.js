@@ -5,13 +5,12 @@ import {
     StyleSheet,
     FlatList,
     Alert,
-    TouchableOpacity
+    Keyboard
 } from 'react-native';
 import SearchComponent from '../components/SearchComponent';
 import getApi from '../constant/Api';
 import AsyncStorage from '@react-native-community/async-storage';
-import { CancelIcon, KalpIcon } from '../constant/Icons';
-import { useIsFocused } from '@react-navigation/native'
+import DomainList from '../components/DomainList';
 
 export const getDiffDay = (finish_date) => {
     const u_date = new Date();
@@ -30,7 +29,10 @@ const Main = ({navigation}) => {
 
     useEffect(() => {
         const clearState = navigation.addListener('focus', () => {
-            getAppData()
+            getAppData();
+            setDomains([]);
+            setDomain('');
+            setUserFetch(false)
         });
     
         return clearState;
@@ -53,6 +55,7 @@ const Main = ({navigation}) => {
     let onPress = async () => {
         setDomains([]);
         setUserFetch(true);
+        Keyboard.dismiss()
         if (domain === ''){
             return Alert.alert(
                 'Hata', 
@@ -118,28 +121,11 @@ const Main = ({navigation}) => {
                     data={domains}
                     keyExtractor={_ => _.id.toString()}
                     renderItem={({item, index}) => (
-                        <View style={style.domains}>
-                            <View style={[style.d_name, { backgroundColor: item.registrarName === 'MISSING_WHOIS_DATA' ? '#4dd188' : '#ff4800'}]}>
-                                <Text style={style.gun}>{
-                                    item.registrarName === 'MISSING_WHOIS_DATA'
-                                        ? 'BOŞ'
-                                        : item.gun
-                                }</Text>
-                            </View>
-                            <View style={{marginLeft: 15, marginRight: 'auto'}}>
-                                <Text style={style.domain}>{item.domain}</Text>
-                                <Text numberOfLines={1} style={style.marka}>{
-                                    item.registrarName === 'MISSING_WHOIS_DATA' 
-                                        ? 'Domain Boşta' 
-                                        : item.registrarName
-                                }</Text>
-                            </View>
-                            <TouchableOpacity 
-                                style={[style.follow_et, { backgroundColor: item.follow ? "#ff4800" : "#eee"}]}
-                                onPress={() => addFollow(item, index, item.follow)}>
-                                <KalpIcon size={20} color={item.follow ? "#fff" : "#111"} />
-                            </TouchableOpacity>
-                        </View>
+                        <DomainList 
+                            item={item}
+                            addFollow={() => addFollow(item, index, item.follow)}
+                            index={index}
+                        />
                     )}
                 />
             ) : null}
