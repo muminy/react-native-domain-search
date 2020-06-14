@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
     View,
-    TouchableOpacity,
     StyleSheet,
     Text,
     FlatList,
@@ -13,7 +12,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 const DomainFilters = () => {
 
     const [dlist, setDlist] = useState([]);
-    const [toggleCheckBox, setToggleCheckBox] = useState(false);
 
     const ChangeCheckbox = (text, index) => {
         setDlist(rows => {
@@ -21,13 +19,9 @@ const DomainFilters = () => {
             return [...rows]
         });
         let rows = dlist;
-        rows[index].active = true;
+        rows[index].active = text;
         AsyncStorage.setItem('user_domains', JSON.stringify(rows));
     }
-
-    useEffect(() => {
-        console.log(dlist)
-    }, [dlist])
 
     useEffect(() => {
         getDomains();

@@ -28,28 +28,27 @@ const Main = ({navigation}) => {
     const [userFetch, setUserFetch] = useState(false);
 
     useEffect(() => {
-        const clearState = navigation.addListener('focus', () => {
-            getAppData();
-            setDomains([]);
-            setDomain('');
-            setUserFetch(false)
+        const updateStorage = navigation.addListener('focus', () => {
+            getAppData()
         });
     
-        return clearState;
+        return updateStorage;
     }, [navigation]);
 
     useEffect(() => {
         getAppData();
     }, [])
 
-    const getAppData = async () => {
-        const user_config = await AsyncStorage.getItem('user_domains');
-        
-        if ( user_config ){
-            const active_domains = JSON.parse(user_config).filter(item => item.active === true);
-            return setAvaDomains(active_domains)
-        } 
-        return setAvaDomains([{id: 'com', active: true}])
+    const getAppData = () => {
+        AsyncStorage.getItem('user_domains')
+        .then(userConfig => {
+            if (userConfig){
+                const active_domains = JSON.parse(userConfig).filter(item => item.active === true);
+                setAvaDomains(active_domains)
+            } else {
+                setAvaDomains([{id: 'com', active: true}])
+            }
+        })
     }
 
     let onPress = async () => {

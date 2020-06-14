@@ -12,9 +12,9 @@ import { getDiffDay } from '../pages/Main';
 export default function ({addFollow, item, index}) {
     return (
         <View style={style.domains}>
-            <View style={[style.d_name, { backgroundColor: item.registrarName === 'MISSING_WHOIS_DATA' ? '#4dd188' : '#ff4800' }]}>
+            <View style={[style.d_name, { backgroundColor: item.registrarName === 'NOT_FOUND' ? '#4dd188' : '#ff4800' }]}>
                 <Text style={style.gun}>{
-                    item.registrarName === 'MISSING_WHOIS_DATA'
+                    item.registrarName === 'NOT_FOUND'
                         ? 'BOŞ'
                         : getDiffDay(item.delDate)
                 }</Text>
@@ -22,7 +22,7 @@ export default function ({addFollow, item, index}) {
             <View style={{ marginLeft: 15, marginRight: 'auto' }}>
                 <Text style={style.domain}>{item.domain}</Text>
                 <Text numberOfLines={1} style={style.marka}>{
-                    item.registrarName === 'MISSING_WHOIS_DATA'
+                    item.registrarName === 'NOT_FOUND'
                         ? 'Domain Boşta'
                         : item.registrarName
                 }</Text>
